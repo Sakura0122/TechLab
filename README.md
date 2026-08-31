@@ -12,12 +12,29 @@
 
 ## 实验主题
 
-- 接口加密：请求签名、载荷加密、解密与错误处理。
+- 接口加密：AES-256-GCM 双向加密载荷，RSA-OAEP-256 加密每请求会话密钥。
 - Redis：缓存、数据结构、过期策略与分布式场景验证。
 - MongoDB：文档建模、索引、查询与 Spring Boot 集成。
 - 前后端协作：鉴权、接口约定、异常响应与调试体验。
 
 实验代码会随验证进展逐步加入；请为每项新增实验保留清晰的入口、必要配置和复现步骤。
+
+### 接口双向加密
+
+后端启动时生成临时 RSA-3072 密钥对，前端通过
+`GET /api-encryption/public-key` 获取公钥。调用带有 `@ApiEncrypted` 的接口时，
+前端请求配置 `apiEncrypted: true`，即可为每次请求生成 AES-256 密钥并自动完成
+请求加密和响应解密。
+
+示例入口：
+
+- 页面：启动前后端后访问前端首页。
+- 接口：`POST /test/encryption`。
+- 配置：`tech-lab.api-encryption.enabled`，也可通过
+  `API_ENCRYPTION_ENABLED=false` 关闭；关闭后示例接口使用普通 JSON。
+
+公钥协商接口保持明文，其余加密接口使用 96-bit IV、128-bit GCM
+认证标签，并通过时间戳和内存中的 `requestId` 记录拒绝过期或重复请求。
 
 ## 目录结构
 
