@@ -88,13 +88,15 @@ public class PageDto {
 
     public <T> Page<T> toMpPageDefaultCreateTimeDesc() {
         return toMpPage(
-                new OrderItem().setColumn("created_at").setAsc(false)
+                new OrderItem().setColumn("created_at").setAsc(false),
+                new OrderItem().setColumn("id").setAsc(false)
         );
     }
 
     public <T> Page<T> toMpPageDefaultUpdateTimeDesc() {
         return toMpPage(
-                new OrderItem().setColumn("updated_at").setAsc(false)
+                new OrderItem().setColumn("updated_at").setAsc(false),
+                new OrderItem().setColumn("id").setAsc(false)
         );
     }
 }
