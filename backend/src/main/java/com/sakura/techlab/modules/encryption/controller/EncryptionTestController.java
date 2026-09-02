@@ -1,8 +1,8 @@
-package com.sakura.techlab.controller;
+package com.sakura.techlab.modules.encryption.controller;
 
 
 import com.sakura.techlab.common.Result;
-import com.sakura.techlab.encryption.ApiEncrypted;
+import com.sakura.techlab.modules.encryption.ApiEncrypted;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Tag(name = "测试")
 @RestController
 @RequestMapping("/test")
-public class TestController {
+public class EncryptionTestController {
 
     @GetMapping
     public Result<String> test() {

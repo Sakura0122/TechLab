@@ -1,4 +1,4 @@
-package com.sakura.techlab.encryption;
+package com.sakura.techlab.modules.encryption;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
@@ -12,8 +12,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import javax.crypto.SecretKey;
 
-import static com.sakura.techlab.encryption.ApiEncryptionRequestAdvice.ENCRYPTION_KEY_ATTRIBUTE;
-import static com.sakura.techlab.encryption.ApiEncryptionRequestAdvice.REQUEST_ID_ATTRIBUTE;
+import static com.sakura.techlab.modules.encryption.ApiEncryptionRequestAdvice.ENCRYPTION_KEY_ATTRIBUTE;
+import static com.sakura.techlab.modules.encryption.ApiEncryptionRequestAdvice.REQUEST_ID_ATTRIBUTE;
 
 @ControllerAdvice
 public class ApiEncryptionResponseAdvice implements ResponseBodyAdvice<Object> {

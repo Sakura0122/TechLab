@@ -1,4 +1,4 @@
-package com.sakura.techlab.encryption;
+package com.sakura.techlab.modules.encryption;
 
 import javax.crypto.SecretKey;
 

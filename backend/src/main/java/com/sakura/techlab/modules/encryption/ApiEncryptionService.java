@@ -1,4 +1,4 @@
-package com.sakura.techlab.encryption;
+package com.sakura.techlab.modules.encryption;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,10 +22,10 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.sakura.techlab.encryption.ApiEncryptionPayload.Config;
-import static com.sakura.techlab.encryption.ApiEncryptionPayload.DecryptedBody;
-import static com.sakura.techlab.encryption.ApiEncryptionPayload.Request;
-import static com.sakura.techlab.encryption.ApiEncryptionPayload.Response;
+import static com.sakura.techlab.modules.encryption.ApiEncryptionPayload.Config;
+import static com.sakura.techlab.modules.encryption.ApiEncryptionPayload.DecryptedBody;
+import static com.sakura.techlab.modules.encryption.ApiEncryptionPayload.Request;
+import static com.sakura.techlab.modules.encryption.ApiEncryptionPayload.Response;
 
 @Service
 public class ApiEncryptionService {

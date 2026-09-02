@@ -1,8 +1,8 @@
-package com.sakura.techlab.controller;
+package com.sakura.techlab.modules.encryption.controller;
 
 import com.sakura.techlab.common.Result;
-import com.sakura.techlab.encryption.ApiEncryptionPayload;
-import com.sakura.techlab.encryption.ApiEncryptionService;
+import com.sakura.techlab.modules.encryption.ApiEncryptionPayload;
+import com.sakura.techlab.modules.encryption.ApiEncryptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;

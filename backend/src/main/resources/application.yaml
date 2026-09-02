@@ -16,7 +16,7 @@ springdoc:
       paths-to-match:
         - '/**'
       packages-to-scan:
-        - com.sakura.techlab.controller
+        - com.sakura.techlab.modules
 # knife4j
 knife4j:
   enable: true

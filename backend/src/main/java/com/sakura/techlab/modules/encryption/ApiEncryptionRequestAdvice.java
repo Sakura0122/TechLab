@@ -1,4 +1,4 @@
-package com.sakura.techlab.encryption;
+package com.sakura.techlab.modules.encryption;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 
-import static com.sakura.techlab.encryption.ApiEncryptionPayload.DecryptedBody;
-import static com.sakura.techlab.encryption.ApiEncryptionPayload.Request;
+import static com.sakura.techlab.modules.encryption.ApiEncryptionPayload.DecryptedBody;
+import static com.sakura.techlab.modules.encryption.ApiEncryptionPayload.Request;
 
 @ControllerAdvice
 public class ApiEncryptionRequestAdvice extends RequestBodyAdviceAdapter {
