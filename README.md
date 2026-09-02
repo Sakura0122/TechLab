@@ -13,6 +13,7 @@
 ## 实验主题
 
 - 接口加密：AES-256-GCM 双向加密载荷，RSA-OAEP-256 加密每请求会话密钥。
+- 数据字典：Spring Boot、MyBatis-Plus 与 Vue 3 实现字典及字典项的整体增删改查。
 - Redis：缓存、数据结构、过期策略与分布式场景验证。
 - MongoDB：文档建模、索引、查询与 Spring Boot 集成。
 - 前后端协作：鉴权、接口约定、异常响应与调试体验。
@@ -35,6 +36,19 @@
 
 公钥协商接口保持明文，其余加密接口使用 96-bit IV、128-bit GCM
 认证标签，并通过时间戳和内存中的 `requestId` 记录拒绝过期或重复请求。
+
+### 数据字典
+
+执行 [`sql/data_dictionary.sql`](sql/data_dictionary.sql) 初始化数据表，启动前后端后访问
+`/dictionary`。列表支持按名称、编号和类型搜索；新增与编辑通过同一抽屉整体维护字典信息及其字典项。
+
+接口入口：
+
+- `GET /dictionaries`：分页查询。
+- `GET /dictionaries/{id}`：查询字典及字典项详情。
+- `POST /dictionaries`：新增字典及字典项。
+- `PUT /dictionaries/{id}`：整体编辑字典及字典项。
+- `DELETE /dictionaries/{id}`：删除字典及其字典项。
 
 ## 目录结构
 
