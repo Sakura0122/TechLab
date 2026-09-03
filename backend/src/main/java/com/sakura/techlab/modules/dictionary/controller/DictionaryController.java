@@ -6,11 +6,14 @@ import com.sakura.techlab.modules.dictionary.dto.DictionaryPageRequest;
 import com.sakura.techlab.modules.dictionary.dto.DictionarySaveRequest;
 import com.sakura.techlab.modules.dictionary.service.DictionaryService;
 import com.sakura.techlab.modules.dictionary.vo.DictionaryDetailVo;
+import com.sakura.techlab.modules.dictionary.vo.DictionaryItemVo;
 import com.sakura.techlab.modules.dictionary.vo.DictionaryVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +24,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 @Tag(name = "数据字典")
 @Validated
@@ -35,6 +41,14 @@ public class DictionaryController {
     @GetMapping
     public Result<PageVo<DictionaryVo>> page(@Valid DictionaryPageRequest request) {
         return Result.success(dictionaryService.pageDictionaries(request));
+    }
+
+    @Operation(summary = "批量查询字典项")
+    @PostMapping("/batch")
+    public Result<Map<String, List<DictionaryItemVo>>> batch(
+            @RequestBody @NotEmpty(message = "字典编号不能为空") List<@NotBlank(message = "字典编号不能为空") String> codes
+    ) {
+        return Result.success(dictionaryService.getDictionaryItemsByCodes(codes));
     }
 
     @Operation(summary = "查询字典详情")

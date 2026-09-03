@@ -6,7 +6,11 @@ import com.sakura.techlab.common.PageVo;
 import com.sakura.techlab.modules.dictionary.dto.DictionaryPageRequest;
 import com.sakura.techlab.modules.dictionary.dto.DictionarySaveRequest;
 import com.sakura.techlab.modules.dictionary.vo.DictionaryDetailVo;
+import com.sakura.techlab.modules.dictionary.vo.DictionaryItemVo;
 import com.sakura.techlab.modules.dictionary.vo.DictionaryVo;
+
+import java.util.List;
+import java.util.Map;
 
 /**
 * @author sakura
@@ -16,6 +20,8 @@ import com.sakura.techlab.modules.dictionary.vo.DictionaryVo;
 public interface DictionaryService extends IService<Dictionary> {
 
     PageVo<DictionaryVo> pageDictionaries(DictionaryPageRequest request);
+
+    Map<String, List<DictionaryItemVo>> getDictionaryItemsByCodes(List<String> codes);
 
     DictionaryDetailVo getDictionary(Long id);
 

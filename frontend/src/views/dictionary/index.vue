@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { dictionaryApi } from '@/api/dictionary'
-import type { Dictionary } from '@/api/dictionary/type'
+import type { Dictionary, DictionaryQuery } from '@/api/dictionary/type'
 import {
   DICTIONARY_TYPE,
   DICTIONARY_TYPE_FILTER_ALL,
@@ -8,9 +8,12 @@ import {
   type DictionaryType,
 } from '@/constants/dictionary'
 import DictionaryDrawer from '@/views/dictionary/components/dictionary-drawer.vue'
+import CommonPagination from '@/components/common-pagination.vue'
+import { useDelete } from '@/hooks/useConfirm'
+import { useTable } from '@/hooks/useTable'
+import type { PageRequest } from '@/types/common'
 import { BookOpen, Pencil, Plus, Search, Trash2 } from '@lucide/vue'
-import { ElMessageBox } from 'element-plus'
-import { onMounted, ref } from 'vue'
+import { ref, useTemplateRef } from 'vue'
 
 defineOptions({ name: 'DictionaryPage' })
 
@@ -18,93 +21,22 @@ interface DictionaryDrawerExpose {
   open: (id?: string) => Promise<void>
 }
 
-const drawerRef = ref<DictionaryDrawerExpose>()
-const loading = ref(false)
-const deletingId = ref<string>()
-const keyword = ref('')
-const typeFilter = ref<typeof DICTIONARY_TYPE_FILTER_ALL | DictionaryType>(
-  DICTIONARY_TYPE_FILTER_ALL,
+const drawerRef = useTemplateRef<DictionaryDrawerExpose>('drawerRef')
+const queryParams = ref<DictionaryQuery>({
+  keyword: '',
+  type: DICTIONARY_TYPE_FILTER_ALL,
+})
+const { list, loading, pagination, search } = useTable(
+  (params: PageRequest<DictionaryQuery>) => dictionaryApi.page(params),
+  { params: queryParams },
 )
-const currentPage = ref(1)
-const pageSize = ref(20)
-const total = ref(0)
-const dictionaries = ref<Dictionary[]>([])
 
 const getDictionaryTypeLabel = (type: DictionaryType) => DICTIONARY_TYPE_LABELS[type]
 
-const loadDictionaries = async () => {
-  loading.value = true
-  try {
-    const { data } = await dictionaryApi.page({
-      currentPage: currentPage.value,
-      pageSize: pageSize.value,
-      keyword: keyword.value.trim() || undefined,
-      type: typeFilter.value === DICTIONARY_TYPE_FILTER_ALL ? undefined : typeFilter.value,
-    })
-    dictionaries.value = data.list
-    total.value = data.total
-  } catch {
-    dictionaries.value = []
-    total.value = 0
-  } finally {
-    loading.value = false
-  }
-}
-
-const search = () => {
-  currentPage.value = 1
-  loadDictionaries()
-}
-
-const handlePageChange = (page: number) => {
-  currentPage.value = page
-  loadDictionaries()
-}
-
-const handleSizeChange = (size: number) => {
-  pageSize.value = size
-  currentPage.value = 1
-  loadDictionaries()
-}
-
-const handleSaved = () => {
-  currentPage.value = 1
-  loadDictionaries()
-}
-
-const deleteDictionary = async (id: string) => {
-  const dictionary = dictionaries.value.find((item) => item.id === id)
-  if (!dictionary) {
-    return
-  }
-
-  try {
-    await ElMessageBox.confirm(`删除后，“${dictionary.name}”及其全部字典项将不可用。`, '删除字典', {
-      type: 'warning',
-      confirmButtonText: '删除',
-      cancelButtonText: '取消',
-      confirmButtonClass: 'el-button--danger',
-    })
-  } catch {
-    return
-  }
-
-  deletingId.value = dictionary.id
-  try {
-    await dictionaryApi.delete(dictionary.id)
-    ElMessage.success('字典删除成功')
-    if (dictionaries.value.length === 1 && currentPage.value > 1) {
-      currentPage.value -= 1
-    }
-    await loadDictionaries()
-  } catch {
-    // 请求层统一展示错误信息。
-  } finally {
-    deletingId.value = undefined
-  }
-}
-
-onMounted(loadDictionaries)
+const { handleDelete } = useDelete<Dictionary>(
+  (dictionary) => dictionaryApi.delete(dictionary.id),
+  () => void search(),
+)
 </script>
 
 <template>
@@ -123,7 +55,7 @@ onMounted(loadDictionaries)
     <section class="border-y border-zinc-200 bg-white">
       <div class="flex flex-col gap-3 border-b border-zinc-200 px-4 py-4 lg:flex-row">
         <el-input
-          v-model="keyword"
+          v-model="queryParams.keyword"
           clearable
           class="sm:max-w-sm"
           placeholder="搜索名称或编号"
@@ -135,14 +67,14 @@ onMounted(loadDictionaries)
           </template>
         </el-input>
         <el-button @click="search">查询</el-button>
-        <el-radio-group v-model="typeFilter" class="lg:ml-auto" @change="search">
+        <el-radio-group v-model="queryParams.type" class="lg:ml-auto" @change="search">
           <el-radio-button :value="DICTIONARY_TYPE_FILTER_ALL">全部</el-radio-button>
           <el-radio-button :value="DICTIONARY_TYPE.SYSTEM">系统字典</el-radio-button>
           <el-radio-button :value="DICTIONARY_TYPE.BUSINESS">业务字典</el-radio-button>
         </el-radio-group>
       </div>
 
-      <el-table v-loading="loading" :data="dictionaries" row-key="id">
+      <el-table v-loading="loading" :data="list" row-key="id">
         <el-table-column prop="name" label="字典名称" min-width="160" />
         <el-table-column prop="code" label="字典编号" min-width="180">
           <template #default="{ row }">
@@ -169,10 +101,9 @@ onMounted(loadDictionaries)
             <el-button
               link
               type="danger"
-              :loading="deletingId === row.id"
-              @click="deleteDictionary(row.id)"
+              @click="handleDelete(row)"
             >
-              <Trash2 v-if="deletingId !== row.id" :size="15" />
+              <Trash2 :size="15" />
               删除
             </el-button>
           </template>
@@ -186,18 +117,10 @@ onMounted(loadDictionaries)
       </el-table>
 
       <div class="flex justify-end px-4 py-4">
-        <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :total="total"
-          :page-sizes="[10, 20, 50]"
-          layout="total, sizes, prev, pager, next"
-          @current-change="handlePageChange"
-          @size-change="handleSizeChange"
-        />
+        <CommonPagination :pagination />
       </div>
     </section>
 
-    <DictionaryDrawer ref="drawerRef" @saved="handleSaved" />
+    <DictionaryDrawer ref="drawerRef" @saved="search" />
   </main>
 </template>

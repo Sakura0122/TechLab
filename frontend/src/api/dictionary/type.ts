@@ -1,14 +1,6 @@
 import type { DictionaryType } from '@/constants/dictionary'
 
-export interface PageResult<T> {
-  total: number
-  pageCount: number
-  list: T[]
-}
-
-export interface DictionaryPageParams {
-  currentPage: number
-  pageSize: number
+export interface DictionaryQuery {
   keyword?: string
   type?: DictionaryType
 }
@@ -35,6 +27,8 @@ export interface Dictionary {
 export interface DictionaryDetail extends Dictionary {
   items: DictionaryItem[]
 }
+
+export type DictionaryMap = Record<string, DictionaryItem[]>
 
 export interface DictionaryItemInput {
   name: string

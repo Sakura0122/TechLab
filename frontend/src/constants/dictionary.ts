@@ -3,7 +3,7 @@ export const DICTIONARY_TYPE = {
   BUSINESS: 2,
 } as const
 
-export const DICTIONARY_TYPE_FILTER_ALL = 0 as const
+export const DICTIONARY_TYPE_FILTER_ALL = undefined
 
 export type DictionaryType = (typeof DICTIONARY_TYPE)[keyof typeof DICTIONARY_TYPE]
 

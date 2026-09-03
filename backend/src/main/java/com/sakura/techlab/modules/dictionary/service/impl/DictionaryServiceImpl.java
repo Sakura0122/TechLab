@@ -23,10 +23,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
 * @author sakura
@@ -54,6 +56,44 @@ public class DictionaryServiceImpl extends ServiceImpl<DictionaryMapper, Diction
 
         // 3. 查询并转换分页结果
         return PageVo.of(page(page, wrapper), DictionaryVo.class);
+    }
+
+    @Override
+    public Map<String, List<DictionaryItemVo>> getDictionaryItemsByCodes(List<String> codes) {
+        // 1.规范化并去重字典编号，保持请求顺序
+        List<String> normalizedCodes = codes.stream()
+                .map(String::trim)
+                .distinct()
+                .toList();
+
+        // 2.查询字典主记录并建立编号到ID的映射
+        Map<String, Long> dictionaryIds = lambdaQuery()
+                .in(Dictionary::getCode, normalizedCodes)
+                .list()
+                .stream()
+                .collect(Collectors.toMap(Dictionary::getCode, Dictionary::getId));
+
+        // 3.按字典ID批量查询启用的字典项
+        Map<Long, List<DictionaryItemVo>> itemsByDictionaryId = new LinkedHashMap<>();
+        if (!dictionaryIds.isEmpty()) {
+            List<Long> ids = dictionaryIds.values().stream().toList();
+            Map<Long, List<DictionaryItemVo>> queriedItems = dictionaryItemService.lambdaQuery()
+                    .in(DictionaryItem::getDictionaryId, ids)
+                    .eq(DictionaryItem::getStatus, 1)
+                    .orderByAsc(DictionaryItem::getSort, DictionaryItem::getId)
+                    .list()
+                    .stream()
+                    .map(item -> Map.entry(item.getDictionaryId(), BeanUtil.copyProperties(item, DictionaryItemVo.class)))
+                    .collect(Collectors.groupingBy(Map.Entry::getKey, LinkedHashMap::new,
+                            Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+            itemsByDictionaryId.putAll(queriedItems);
+        }
+
+        // 4.按请求编号组装结果，未找到的字典返回空列表
+        Map<String, List<DictionaryItemVo>> result = new LinkedHashMap<>();
+        normalizedCodes.forEach(code -> result.put(code, itemsByDictionaryId.getOrDefault(
+                dictionaryIds.get(code), List.of())));
+        return result;
     }
 
     @Override

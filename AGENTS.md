@@ -23,6 +23,13 @@ TechLab 是个人技术实验仓库，用于验证和沉淀可复现的技术方
 - 后端入参校验统一使用 Validation 注解声明约束，并在接口入口配合 `@Valid` 或 `@Validated` 触发校验，避免在业务代码中重复手写基础参数校验。
 - 除非需求明确要求，不创建或修改测试文件。
 
+## 前端代码规范
+
+- Vue 组件模板引用统一使用 Vue 3.5 的 `useTemplateRef`，不使用 `ref<T>()` 声明模板引用。
+- 删除、提交、启用和停用等需要二次确认的操作统一复用 `src/hooks/useConfirm.ts`，不在页面中直接调用 `ElMessageBox.confirm`。
+- 分页表格统一复用 `useTable` 和公共分页组件；分页请求与响应分别使用公共类型 `PageRequest<T>` 和 `PageResult<T>`。
+- 页面使用 hook 返回值时保留 `list`、`loading`、`pagination`、`getList`、`search` 等标准命名，除非存在明确的命名冲突，不做无意义的解构重命名。
+
 ## 验证
 
 - 前端改动：在 `frontend/` 执行 `pnpm type-check`；涉及构建配置或生产产物时执行 `pnpm build`。

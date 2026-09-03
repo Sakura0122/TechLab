@@ -5,17 +5,23 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/dictionary',
-    },
-    {
-      path: '/dictionary',
-      name: 'dictionary',
-      component: () => import('@/views/dictionary/index.vue'),
-    },
-    {
-      path: '/encryption',
-      name: 'encryption',
-      component: () => import('@/views/encryption/index.vue'),
+      component: () => import('@/layout/index.vue'),
+      children: [
+        {
+          path: '',
+          redirect: '/dictionary',
+        },
+        {
+          path: 'dictionary',
+          name: 'dictionary',
+          component: () => import('@/views/dictionary/index.vue'),
+        },
+        {
+          path: 'encryption',
+          name: 'encryption',
+          component: () => import('@/views/encryption/index.vue'),
+        },
+      ],
     },
   ],
 })

@@ -12,7 +12,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    CommonPagination: typeof import('./src/components/common-pagination.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDrawer: typeof import('element-plus/es')['ElDrawer']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
@@ -38,7 +40,9 @@ declare module 'vue' {
 
 // For TSX support
 declare global {
+  const CommonPagination: typeof import('./src/components/common-pagination.vue')['default']
   const ElButton: typeof import('element-plus/es')['ElButton']
+  const ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
   const ElDrawer: typeof import('element-plus/es')['ElDrawer']
   const ElForm: typeof import('element-plus/es')['ElForm']
   const ElFormItem: typeof import('element-plus/es')['ElFormItem']

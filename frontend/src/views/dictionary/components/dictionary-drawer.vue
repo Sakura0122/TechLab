@@ -4,7 +4,7 @@ import type { DictionaryInput, DictionaryItemInput } from '@/api/dictionary/type
 import { DICTIONARY_TYPE_OPTIONS, type DictionaryType } from '@/constants/dictionary'
 import { Plus, Save, Trash2 } from '@lucide/vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import { nextTick, ref } from 'vue'
+import { nextTick, ref, useTemplateRef } from 'vue'
 
 defineOptions({ name: 'DictionaryDrawer' })
 
@@ -25,7 +25,7 @@ const visible = ref(false)
 const editingId = ref<string>()
 const detailLoading = ref(false)
 const submitting = ref(false)
-const formRef = ref<FormInstance>()
+const formRef = useTemplateRef<FormInstance>('formRef')
 let itemSequence = 0
 
 const createItem = (item?: Partial<DictionaryItemInput>): EditableDictionaryItem => ({
